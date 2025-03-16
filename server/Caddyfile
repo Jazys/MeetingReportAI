@@ -1,0 +1,6 @@
+assistant.ai.omvpb.ovh {
+    reverse_proxy whisper:3000
+    tls {
+        on_demand
+    }
+}

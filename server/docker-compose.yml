@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  whisper:
+    build: .
+    container_name: whisper_app
+    ports:
+      - "3000:3000"
+    environment:
+      - RESEND_API_KEY=re_123456789 
+    volumes:
+      - .:/app 
+      - whisper-node-modules:/app/node_modules
+      - whisper-data:/app/whisper.cpp  
+    restart: always
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile 
+    restart: always
+
+volumes:
+  whisper-node-modules:
+  whisper-data:
+  caddy_data:
+  caddy_config:

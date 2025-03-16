@@ -1,0 +1,29 @@
+{
+  "name": "whisper-next",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@types/multer": "^1.4.7",
+    "cors": "^2.8.5",
+    "fluent-ffmpeg": "^2.1.2",
+    "multer": "^1.4.5-lts.1",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "resend": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/fluent-ffmpeg": "^2.1.21",
+    "@types/fs-extra": "^11.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}
