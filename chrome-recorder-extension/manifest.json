@@ -1,0 +1,36 @@
+{
+  "name": "Meeting Agent",
+  "description": "Enregistrez et transcrivez vos réunions facilement avec cette extension Chrome. Capture l'audio des onglets et du microphone avec des contrôles de volume personnalisés et une transcription automatique.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "minimum_chrome_version": "116",
+  "icons": {
+        "16": "images/icon-16.png",
+        "48": "images/icon-48.png",
+        "128": "images/icon-128.png"
+    },
+  "action": {
+    "default_icon": "icons/not-recording.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "permissions": ["tabCapture", "offscreen", "activeTab", "storage"],
+  "host_permissions": ["*://*/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["permission.html", "offscreen.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "commands": {
+    "toggle-recording": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+R",
+        "mac": "Command+Shift+R"
+      },
+      "description": "Démarrer/Arrêter l'enregistrement"
+    }
+  }
+}

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Audio Recorder</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <script src="popup.js" defer></script>
+</head>
+<body class="bg-gray-50 p-5 w-80">
+    <div class="space-y-5">
+        <!-- Titre -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-medium text-gray-800">Meeting Recorder</h1>
+            <p class="text-gray-500 text-xs mt-1">Enregistrez vos réunions simplement</p>
+        </div>
+        
+        <!-- Notification d'erreur -->
+        <div id="permissionStatus" class="hidden bg-yellow-50 border border-yellow-200 text-yellow-700 p-3 rounded-lg text-xs"></div>
+        
+        <!-- Onboarding Guide -->
+        <div id="onboardingGuide" class="hidden mb-4">
+            <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-800">
+                <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-medium mb-1">Bienvenue sur Audio Recorder!</h3>
+                        <p class="text-xs mb-2">Suivez ces étapes pour commencer:</p>
+                        <ol class="list-decimal text-xs pl-4 space-y-1.5">
+                            <li id="step1" class="font-medium">
+                                <span>Configurez votre clé API</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-4 w-4 ml-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                                </svg>
+                            </li>
+                            <li id="step2" class="text-gray-500">
+                                <span>Ajoutez des informations de réunion (optionnel)</span>
+                            </li>
+                            <li id="step3" class="text-gray-500">
+                                <span>Démarrez l'enregistrement</span>
+                            </li>
+                        </ol>
+                        <div class="mt-3 flex justify-end">
+                            <button id="dismissOnboarding" class="text-xs text-blue-700 hover:text-blue-900 flex items-center">
+                                <span>Ne plus afficher</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons principaux -->
+        <div class="flex flex-col items-center space-y-4">
+            <button id="startRecord" class="flex items-center justify-center space-x-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-5 rounded-full shadow-sm transition-all w-full max-w-xs">
+                <span class="text-xl">🎙️</span>
+                <span>Démarrer l'enregistrement</span>
+            </button>
+            
+            <button id="stopRecord" class="hidden flex items-center justify-center space-x-3 bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-5 rounded-full shadow-sm transition-all w-full max-w-xs">
+                <span class="text-xl">⏹️</span>
+                <span>Arrêter l'enregistrement</span>
+            </button>
+        </div>
+        
+        <!-- Timer et statistiques -->
+        <div id="timer" class="hidden text-center text-sm font-medium text-gray-600 py-2 animate-pulse">
+            Durée: <span id="duration" class="font-bold">00:00</span>
+        </div>
+
+        <div id="recording-stats" class="hidden bg-blue-50 border border-blue-100 p-3 rounded-lg text-xs text-gray-600">
+            <div class="flex justify-between">
+                <span>Taille estimée:</span>
+                <span id="fileSize" class="font-medium">0 Ko</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Segments:</span>
+                <span id="segmentCount" class="font-medium">0</span>
+            </div>
+        </div>
+        
+        <!-- Section informations réunion (repliée par défaut) -->
+        <div class="mt-4">
+            <button id="toggleMeetingSection" class="flex items-center justify-between w-full text-left px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm">👥</span>
+                    <span class="text-sm font-medium text-gray-700">Informations réunion</span>
+                </div>
+                <svg id="meetingArrow" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            
+            <div id="meetingInfoSection" class="hidden mt-2 p-3 bg-white border border-gray-200 rounded-lg">
+                <div class="space-y-3">
+                    <div>
+                        <label for="meetingAttendees" class="block text-xs font-medium text-gray-700 mb-1">Personnes présentes</label>
+                        <textarea id="meetingAttendees" rows="2" 
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Noms des participants séparés par des virgules"></textarea>
+                    </div>
+                    <div>
+                        <label for="meetingContext" class="block text-xs font-medium text-gray-700 mb-1">Contexte de la réunion</label>
+                        <textarea id="meetingContext" rows="3" 
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Précisez le sujet, l'objectif ou l'ordre du jour"></textarea>
+                    </div>
+                    <button id="saveMeetingInfo" class="w-full mt-2 h-8 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-1 px-3 rounded-lg transition-colors">
+                        Sauvegarder les informations
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section configuration (repliée par défaut) -->
+        <div class="mt-2">
+            <button id="toggleApiSection" class="flex items-center justify-between w-full text-left px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors" data-onboarding-highlight>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm">🔑</span>
+                    <span class="text-sm font-medium text-gray-700">Configurer</span>
+                </div>
+                <svg id="apiArrow" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            
+            <div id="apiKeySection" class="hidden mt-2 p-3 bg-white border border-gray-200 rounded-lg">
+                <div class="space-y-3">
+                    <div>
+                        <label for="apiEndpoint" class="block text-xs font-medium text-gray-700 mb-1">URL du serveur</label>
+                        <input type="text" id="apiEndpoint" 
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="https://assistant.ai.omvpb.ovh/api/transcribe">
+                    </div>
+                    <div>
+                        <label for="userEmail" class="block text-xs font-medium text-gray-700 mb-1">Adresse email</label>
+                        <input type="email" id="userEmail" 
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Entrez votre adresse email">
+                    </div>
+                    <div>
+                        <label for="apiKey" class="block text-xs font-medium text-gray-700 mb-1">Clé API <span class="text-red-500">*</span></label>
+                        <div class="flex items-center space-x-2">
+                            <input type="password" id="apiKey" 
+                                class="flex-grow px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Entrez votre clé API" required>
+                            <button id="toggleApiVisibility" class="text-gray-500 hover:text-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1"><span class="text-red-500">*</span> Champ obligatoire</p>
+                    </div>
+                    <button id="saveApiKey" class="w-full mt-2 h-8 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-1 px-3 rounded-lg transition-colors">
+                        Sauvegarder la configuration
+                    </button>
+                    <div id="apiKeyHelp" class="mt-3 p-2 bg-gray-50 rounded-lg border border-gray-200 text-xs text-gray-600">
+                        <p class="mb-1 flex items-start">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500 mr-1 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Pour obtenir une clé API, visitez notre <a href="https://assistant.ai.omvpb.ovh" target="_blank" class="text-blue-600 hover:underline">site web</a> et suivez les instructions d'achat.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section réglages audio (repliée par défaut) -->
+        <div class="mt-2">
+            <button id="toggleAudioSection" class="flex items-center justify-between w-full text-left px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm">🔊</span>
+                    <span class="text-sm font-medium text-gray-700">Réglages audio</span>
+                </div>
+                <svg id="audioArrow" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            
+            <div id="audioSettingsSection" class="hidden mt-2 p-3 bg-white border border-gray-200 rounded-lg">
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label for="micVolume" class="block text-xs font-medium text-gray-700">Volume micro:</label>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm">🎤</span>
+                            <input type="range" id="micVolume" min="0" max="200" value="70" step="5" 
+                                class="flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <span id="micVolumeValue" class="text-xs w-8 text-right">70%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label for="tabVolume" class="block text-xs font-medium text-gray-700">Volume interlocuteur:</label>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm">🔈</span>
+                            <input type="range" id="tabVolume" min="0" max="200" value="100" step="5"
+                                class="flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <span id="tabVolumeValue" class="text-xs w-8 text-right">100%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label for="audioQuality" class="block text-xs font-medium text-gray-700">Qualité audio:</label>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm">📊</span>
+                            <select id="audioQuality" class="flex-grow text-xs px-2 py-1 bg-gray-50 border border-gray-300 rounded-lg appearance-none">
+                                <option value="low">Basse (fichier plus petit)</option>
+                                <option value="medium" selected>Moyenne (recommandé)</option>
+                                <option value="high">Haute (fichier plus grand)</option>
+                            </select>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Une qualité plus basse réduit la taille du fichier.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section debug (repliée par défaut) -->
+        <div class="mt-2">
+            <button id="toggleDebugSection" class="flex items-center justify-between w-full text-left px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm">🔧</span>
+                    <span class="text-sm font-medium text-gray-700">Debug</span>
+                </div>
+                <svg id="debugArrow" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            
+            <div id="debugSection" class="hidden mt-2 p-3 bg-white border border-gray-200 rounded-lg">
+                <div class="space-y-2 text-xs text-gray-600">
+                    <div>
+                        <span class="font-medium">Taille estimée:</span>
+                        <span id="debugFileSize" class="ml-2">0 Ko</span>
+                    </div>
+                    <div>
+                        <span class="font-medium">Segments:</span>
+                        <span id="debugSegmentCount" class="ml-2">0</span>
+                    </div>
+                    <div>
+                        <span class="font-medium">URL actuelle:</span>
+                        <p id="debugCurrentUrl" class="mt-1 break-all"></p>
+                    </div>
+                    <div>
+                        <span class="font-medium">Nom du fichier:</span>
+                        <p id="debugFileName" class="mt-1 break-all"></p>
+                    </div>
+                    <div>
+                        <span class="font-medium">Logs:</span>
+                        <pre id="debugLogs" class="mt-1 whitespace-pre-wrap bg-gray-50 p-2 rounded-lg max-h-32 overflow-y-auto"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transcription -->
+        <div id="transcription-section" class="hidden mt-3 space-y-2">
+            <div class="bg-white border border-gray-200 p-3 rounded-lg shadow-sm">
+                <h3 class="font-medium text-gray-700 text-sm mb-2">Transcription :</h3>
+                <div class="max-h-48 overflow-y-auto">
+                    <p id="transcription-text" class="text-sm text-gray-600"></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center text-xs text-gray-400 pt-2 border-t border-gray-200 mt-3">
+            <p>Version 1.0</p>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div id="notification" class="hidden fixed top-2 left-1/2 transform -translate-x-1/2 py-2 px-3 bg-green-100 text-green-800 text-xs rounded-lg shadow-md">
+        Message
+    </div>
+  </body>
+</html>

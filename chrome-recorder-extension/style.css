@@ -1,0 +1,513 @@
+/* Reset CSS de base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Styles personnalisés utilisant les classes utilitaires */
+.bg-gray-100 {
+    background-color: #f3f4f6;
+}
+
+.p-6 {
+    padding: 1.5rem;
+}
+
+.w-80 {
+    width: 20rem;
+}
+
+.space-y-6 > * + * {
+    margin-top: 1.5rem;
+}
+
+.space-y-4 > * + * {
+    margin-top: 1rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-gray-800 {
+    color: #1f2937;
+}
+
+.text-gray-600 {
+    color: #4b5563;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.mt-1 {
+    margin-top: 0.25rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.bg-blue-600 {
+    background-color: #2563eb;
+}
+
+.bg-red-600 {
+    background-color: #dc2626;
+}
+
+.text-white {
+    color: white;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.transition-colors {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.space-x-2 > * + * {
+    margin-left: 0.5rem;
+}
+
+.text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.text-gray-500 {
+    color: #6b7280;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background-color: #1d4ed8; /* Pour le bouton bleu */
+}
+
+button#stop:hover:not(:disabled) {
+    background-color: #b91c1c; /* Pour le bouton rouge */
+}
+
+.bg-green-600 {
+    background-color: #16a34a;
+}
+
+button#download:hover:not(:disabled) {
+    background-color: #15803d;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Ajouter ces styles à la fin du fichier */
+input[type="password"] {
+    background-color: white;
+}
+
+input[type="password"]:focus {
+    border-color: #3b82f6;
+}
+
+.bg-green-700 {
+    background-color: #15803d;
+}
+
+button#saveApiKey:hover {
+    background-color: #15803d;
+}
+
+#timer {
+    font-family: monospace;
+    padding: 0.5rem;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+#duration {
+    font-weight: bold;
+    color: #2563eb;
+}
+
+#transcription-section {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#transcription-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.bg-white {
+    background-color: white;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+/* Styles personnalisés pour Meeting Agent */
+
+/* Styles spécifiques pour les curseurs */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+  background: #2563eb;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+  background: #2563eb;
+}
+
+/* Style pour les boutons */
+button {
+  transition: all 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Style de la section de transcription */
+#transcription-text {
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* Animation pour le timer */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.recording #timer {
+  animation: pulse 2s infinite;
+}
+
+/* Style pour les notifications */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background-color: #4285f4;
+  color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.notification.error {
+  background-color: #d93025;
+}
+
+/* Style pour les sélecteurs */
+select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* Style pour le champ de clé API */
+#apiKey {
+  transition: all 0.2s ease;
+}
+
+#apiKey:focus {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+/* Styles pour les sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+  background: #2563eb;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+  background: #2563eb;
+}
+
+/* Styles pour les boutons */
+button {
+  transition: all 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Styles pour le timer pendant l'enregistrement */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.animate-pulse {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Notifications */
+#notification {
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+/* Styles pour les champs de saisie */
+input[type="password"], input[type="text"], textarea {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="password"]:focus, input[type="text"]:focus, textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Animations pour les sections dépliables */
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Transition douce pour les sections dépliables */
+#apiKeySection, #audioSettingsSection, #meetingInfoSection {
+  transition: all 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+}
+
+#apiKeySection.expanded, #audioSettingsSection.expanded, #meetingInfoSection.expanded {
+  max-height: 500px; /* Valeur suffisamment grande */
+}
+
+/* Styles pour les textarea de la section information réunion */
+textarea {
+  resize: vertical;
+  min-height: 2.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  width: 100%;
+}
+
+textarea::placeholder {
+  color: #9ca3af;
+}
+
+.debug-section {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  background-color: #1a1a1a;
+}
+
+.debug-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #e5e5e5;
+  cursor: pointer;
+}
+
+.debug-section .debug-content {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #a3a3a3;
+}
+
+.debug-section .debug-item {
+  margin: 0.5rem 0;
+}
+
+.debug-section .debug-label {
+  font-weight: bold;
+  color: #e5e5e5;
+}
+
+.debug-section .debug-value {
+  word-break: break-all;
+  font-family: monospace;
+}
+
+.debug-section #debugLogs {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #262626;
+  border-radius: 0.25rem;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 0.75rem;
+}
+
+/* Transition pour l'expansion/réduction de la section debug */
+.debug-section .debug-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.debug-section .debug-content.expanded {
+  max-height: 500px;
+}
+
+/* Styles pour l'onboarding */
+#onboardingGuide {
+    transition: all 0.3s ease;
+}
+
+#onboardingGuide ol li {
+    transition: color 0.3s ease;
+}
+
+#onboardingGuide .text-green-600 {
+    color: #059669;
+}
+
+/* Animation pour mettre en évidence une section dans l'onboarding */
+@keyframes highlight-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3); }
+    70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+[data-onboarding-highlight]:not(.expanded) {
+    animation: highlight-pulse 2s infinite;
+    border-color: #3b82f6;
+}
+
+/* Style pour les champs requis */
+.text-red-500 {
+    color: #ef4444;
+} 

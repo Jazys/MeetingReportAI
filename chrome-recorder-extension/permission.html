@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Audio Recorder - Demande de permission</title>
+  <link rel="stylesheet" href="css/tailwind.min.css">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f9fafb;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      width: 90%;
+      max-width: 500px;
+    }
+    .permission-icon {
+      background-color: rgba(59, 130, 246, 0.1);
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem auto;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .pulse {
+      animation: pulse 2s infinite ease-in-out;
+    }
+    .status-success {
+      color: #047857;
+      background-color: #ecfdf5;
+    }
+    .status-error {
+      color: #b91c1c;
+      background-color: #fee2e2;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="container">
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <div class="text-center">
+        <div class="permission-icon pulse">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+        </div>
+        <h1 class="text-2xl font-medium text-gray-800 mb-3">Accès au microphone requis</h1>
+        <p class="text-gray-600 mb-6">
+          Pour enregistrer l'audio de vos réunions, l'extension a besoin de l'autorisation d'accéder à votre microphone. Cet accès est entièrement sécurisé et l'audio est traité localement.
+        </p>
+        
+        <div id="status" class="hidden rounded-lg p-4 mb-6 text-sm"></div>
+        
+        <button id="requestPermission" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-5 rounded-lg shadow-sm transition-colors flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+          </svg>
+          Autoriser l'accès au microphone
+        </button>
+        
+        <p class="text-xs text-gray-500 mt-4">
+          Vous pouvez modifier ces autorisations à tout moment dans les paramètres de votre navigateur.
+        </p>
+      </div>
+    </div>
+  </div>
+  <script src="permission-dialog.js"></script>
+</body>
+</html>
