@@ -21,6 +21,7 @@ class WhisperProcessor {
 
   private constructor() {
     this.resend = new Resend(process.env.RESEND_API_KEY);
+    this.startJobChecker(); // Start the job checker
   }
 
   public static getInstance(): WhisperProcessor {
@@ -48,9 +49,12 @@ class WhisperProcessor {
   }
 
   private async processNextJob() {
+    console.log("🔄 Verifie si un job est en cours ou si la queue est vide...");
     if (this.isProcessing || this.queue.length === 0) {
       return;
     }
+
+    console.log("🔄 Un Nouveau Job est prêt à être traité...");
 
     this.isProcessing = true;
     const job = this.queue.shift()!;
@@ -62,8 +66,14 @@ class WhisperProcessor {
       job.reject(error);
     } finally {
       this.isProcessing = false;
-      this.processNextJob(); // Traiter le prochain job s'il y en a
+      this.processNextJob(); // Process the next job if there is one
     }
+  }
+
+  private startJobChecker() {
+    setInterval(() => {
+      this.processNextJob(); // Check for new jobs every 10 minutes
+    }, 10 * 60 * 1000); // 10 minutes in milliseconds
   }
 
   private async sendTranscriptionEmail(email: string, transcript: string) {
@@ -73,7 +83,6 @@ class WhisperProcessor {
         to: email,
         subject: 'Votre transcription est prête',
         html: `
-
           <h1>Transcription terminée</h1>
           <p>Voici votre transcription :</p>
           <pre>${transcript}</pre>
@@ -84,7 +93,6 @@ class WhisperProcessor {
     } catch (error) {
       console.error("🚨 Erreur lors de l'envoi de l'email:", error);
     }
-
   }
 
   private async processWhisperJob(job: WhisperJob): Promise<string> {
@@ -114,17 +122,17 @@ class WhisperProcessor {
 
       const transcript = fs.readFileSync(transcriptPath, 'utf8');
 
-      //envoi de la transcription à n8n  /// {{ JSON.parse($json.body)["email"] }}
+      // Envoi de la transcription à n8n
       try {
         const n8nUrl = 'https://auto.ai.omvpb.ovh/webhook/3de95f6c-cfa2-4a2b-83d0-cf216abb252e';
-      const n8nResponse = await fetch(n8nUrl, {
-        method: 'POST',
-        body: JSON.stringify({ email: job.email, transcript: transcript, model: job.model, metaData: job.metaData }),
-      });
+        const n8nResponse = await fetch(n8nUrl, {
+          method: 'POST',
+          body: JSON.stringify({ email: job.email, transcript: transcript, model: job.model, metaData: job.metaData }),
+        });
+        console.log("🔹 Réponse de n8n :", n8nResponse);
       } catch (error) {
         console.error("🚨 Erreur lors de l'envoi de la transcription à n8n:", error);
       }
- console.log("🔹 Réponse de n8n :", n8nResponse);
 
       // Envoi de l'email avec la transcription
       await this.sendTranscriptionEmail(job.email, transcript);
